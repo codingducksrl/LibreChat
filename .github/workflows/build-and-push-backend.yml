@@ -1,0 +1,55 @@
+name: Backend
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        description: 'The environment to deploy to'
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy ${{ inputs.environment }}
+    runs-on: ubuntu-24-arm
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate the short sha
+        uses: benjlevesque/short-sha@v3.0
+        id: short-sha
+        with:
+          length: 7
+
+      - name: Build and push container latest image
+        uses: docker/build-push-action@v6
+        with:
+          push: false
+          file: ./.docker/prod/Dockerfile
+          tags: ${{ vars.AWS_ECR_REPO }}:${{ steps.short-sha.outputs.sha }},${{ vars.AWS_ECR_REPO }}:latest
+          build-args: |
+            SHORT_SHA=${{ steps.short-sha.outputs.sha }}
+          context: .
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          outputs: type=docker
+
+      - name: Push image to Amazon ECR
+        run: docker push --all-tags ${{ vars.AWS_ECR_REPO }}
+
