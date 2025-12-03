@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: false
-          file: ./.docker/prod/Dockerfile
+          file: ./Dockerfile
           tags: ${{ vars.AWS_ECR_REPO }}:${{ steps.short-sha.outputs.sha }},${{ vars.AWS_ECR_REPO }}:latest
           build-args: |
             SHORT_SHA=${{ steps.short-sha.outputs.sha }}
