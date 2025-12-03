@@ -3,7 +3,7 @@
 # Base node image
 FROM node:20-alpine AS node
 
-RUN curl --output /global-bundle.pem https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem
+ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /global-bundle.pem
 RUN chmod +r /global-bundle.pem
 
 # Install jemalloc
