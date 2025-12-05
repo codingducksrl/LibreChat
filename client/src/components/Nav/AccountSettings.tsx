@@ -76,7 +76,7 @@ function AccountSettings() {
             }}
             className="select-item text-sm"
           >
-            <BillingIcon aria-hidden="true" />
+            <BillingIcon className="icon-md" aria-hidden="true" />
             {localize('com_nav_billing')}
           </Select.SelectItem>
         )}
