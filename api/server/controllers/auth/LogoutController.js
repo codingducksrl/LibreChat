@@ -12,7 +12,10 @@ const logoutController = async (req, res) => {
     res.clearCookie('refreshToken');
     res.clearCookie('token_provider');
     const response = { message };
-    if (
+
+    if(isEnabled(process.env.OPENID_LOGOUT_REDIRECT_URL)){
+      response.redirect = process.env.OPENID_LOGOUT_REDIRECT_URL;
+    }else if (
       req.user.openidId != null &&
       isEnabled(process.env.OPENID_USE_END_SESSION_ENDPOINT) &&
       process.env.OPENID_ISSUER
