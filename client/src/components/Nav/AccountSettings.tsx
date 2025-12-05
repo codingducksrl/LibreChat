@@ -71,7 +71,9 @@ function AccountSettings() {
         {startupConfig?.helpAndFaqURL !== '/' && (
           <Select.SelectItem
             value=""
-            onClick={() => window.open(startupConfig?.helpAndFaqURL)}
+            onClick={() => {
+              window.location.href = startupConfig?.helpAndFaqURL;
+            }}
             className="select-item text-sm"
           >
             <BillingIcon aria-hidden="true" />
